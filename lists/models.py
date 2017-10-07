@@ -1,3 +1,8 @@
 from django.db import models
 
-# Create your models here.
+class Item(models.Model):
+    """
+    Handles storing to-do list items
+    """
+    text = models.TextField(default='')
+    pass
