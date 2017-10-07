@@ -20,6 +20,14 @@ class NewVisitorTest(unittest.TestCase):
         Quits the browser.
         """
         self.browser.quit()
+
+    def check_item_in_list(self, row_text):
+        """
+        Checks if desired item was added to the list.
+        """
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
     
     def test_start_and_retrieve_list(self):
         """
@@ -48,9 +56,7 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1. Call Mom and Dad', [row.text for row in rows])
+        self.check_item_in_list('1. Call Mom and Dad')
 
         # There is still a text box inviting him to enter another item. He enters "Call Brother".
         inputbox = self.browser.find_element_by_id('id_new_item')
@@ -59,10 +65,8 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(1)
 
         # The page updates again, and now shows both items
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1. Call Mom and Dad', [row.text for row in rows])
-        self.assertIn('2. Call Brother', [row.text for row in rows])
+        self.check_item_in_list('1. Call Mom and Dad')
+        self.check_item_in_list('2. Call Brother')
 
         # The site has generated a unique URL for Bob. There's some text mentioning that his list
         # will be saved.
