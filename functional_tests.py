@@ -50,18 +50,23 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1. Call Mom and Dad' for row in rows),
-            "New to-do item did not appear in table"
-        )
+        self.assertIn('1. Call Mom and Dad', [row.text for row in rows])
 
         # There is still a text box inviting him to enter another item. He enters "Call Brother".
-        self.fail('Finish the test!')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Call Brother')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         # The page updates again, and now shows both items
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1. Call Mom and Dad', [row.text for row in rows])
+        self.assertIn('2. Call Brother', [row.text for row in rows])
 
         # The site has generated a unique URL for Bob. There's some text mentioning that his list
         # will be saved.
+        self.fail('Finish the test!')
 
         # Bob vists that URL. His list is still there.
 
