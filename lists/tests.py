@@ -1,12 +1,15 @@
+from django.urls import resolve
 from django.test import TestCase
+from lists.views import home_page
 
-class SmokeTest(TestCase):
+class HomePageTest(TestCase):
     """
-    Simple test to make sure our unit tests are being incorporated.
+    Tests our home page functionality.
     """
 
-    def test_bad_math(self):
+    def test_root_url_returns_home_view(self):
         """
-        Test that inequality is recognized and works.
+        Tests that root url successfully resolves to home page view.
         """
-        self.assertEqual(1 + 1, 3)
+        found = resolve("/")
+        self.assertEqual(found.func, home_page)
