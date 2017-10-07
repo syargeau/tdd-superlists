@@ -16,7 +16,7 @@ class HomePageTest(TestCase):
         found = resolve("/")
         self.assertEqual(found.func, home_page)
 
-    def test_home_with_correct_html(self):
+    def test_home_has_correct_html(self):
         """
         Tests that the home page has the correct html included.
         """
