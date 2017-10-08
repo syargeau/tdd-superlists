@@ -1,10 +1,10 @@
-import unittest
 import time
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
     """
     Test expected outcomes for a new visitor.
     """
@@ -34,7 +34,7 @@ class NewVisitorTest(unittest.TestCase):
         Tests that user can both start and retrieve lists after logging in.
         """
         # Bob wants to check out our app. He goes to our homepage.
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # He notices the page title and header mention to-do lists.
         self.assertIn('To-Do', self.browser.title)
@@ -75,6 +75,3 @@ class NewVisitorTest(unittest.TestCase):
         # Bob vists that URL. His list is still there.
 
         # Bob can now sleep peacefully, knowing he will remember to contact his family.
-
-if __name__ == '__main__':
-    unittest.main()
