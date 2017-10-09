@@ -30,7 +30,7 @@ class HomePageTest(TestCase):
         """
         response = self.client.post('/', data={'item_text': 'A new list item'})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/lists/the-only-list')
 
     def test_dont_save_empty_item(self):
         """
@@ -38,16 +38,6 @@ class HomePageTest(TestCase):
         """
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
-
-    def test_display_all_list_items(self):
-        """
-        Test that all list items are displayed on home page.
-        """
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
-        response = self.client.get('/')
-        self.assertIn('itemey 1', response.content.decode())
-        self.assertIn('itemey 2', response.content.decode())
 
 
 class ItemModelTest(TestCase):
@@ -74,3 +64,26 @@ class ItemModelTest(TestCase):
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, 'The first (ever) list item')
         self.assertEqual(second_saved_item.text, 'The second list item')
+
+
+class ListViewTest(TestCase):
+    """
+    Tests our list views.
+    """
+
+    def test_uses_list_template(self):
+        """
+        Test that the list view uses the list template.
+        """
+        response = self.client.get('/lists/the-only-list/')
+        self.assertTemplateUsed(response, 'list.html')
+
+    def test_display_all_list_items(self):
+        """
+        Test that all list items are displayed.
+        """
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+        response = self.client.get('/lists/the-only-list/')
+        self.assertContains(response, 'itemey 1')
+        self.assertContains(response, 'itemey 2')
