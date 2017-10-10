@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from lists.models import Item
+from lists.models import Item, List
 
 
 class HomePageTest(TestCase):
@@ -16,7 +16,7 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response, 'home.html')
 
 
-class ItemModelTest(TestCase):
+class ListAndItemModelTest(TestCase):
     """
     Tests database functionality.
     """
@@ -25,13 +25,21 @@ class ItemModelTest(TestCase):
         """
         Tests ability to save to and load from the database.
         """
+        list_ = List()
+        list_.save()
+
         first_item = Item()
         first_item.text = 'The first (ever) list item'
+        first_item.list = list_
         first_item.save()
 
         second_item = Item()
         second_item.text = 'The second list item'
+        second_item.list = list_
         second_item.save()
+
+        saved_list = List.objects.first()
+        self.assertEqual(saved_list, list_)
 
         saved_items = Item.objects.all()
         self.assertEqual(saved_items.count(), 2)
@@ -39,7 +47,9 @@ class ItemModelTest(TestCase):
         first_saved_item = saved_items[0]
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, 'The first (ever) list item')
+        self.assertEqual(first_saved_item.list, list_)
         self.assertEqual(second_saved_item.text, 'The second list item')
+        self.assertEqual(second_saved_item.list, list_)
 
 
 class ListViewTest(TestCase):
@@ -58,8 +68,9 @@ class ListViewTest(TestCase):
         """
         Test that all list items are displayed.
         """
-        Item.objects.create(text='itemey 1')
-        Item.objects.create(text='itemey 2')
+        list_ = List.objects.create()
+        Item.objects.create(text='itemey 1', list=list_)
+        Item.objects.create(text='itemey 2', list=list_)
         response = self.client.get('/lists/the-only-list/')
         self.assertContains(response, 'itemey 1')
         self.assertContains(response, 'itemey 2')
