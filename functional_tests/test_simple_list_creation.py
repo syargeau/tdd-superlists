@@ -1,52 +1,16 @@
-import time
-import os
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from .base import FunctionalTest
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import WebDriverException
-
-MAX_WAIT = 4
 
 
-class NewVisitorTest(StaticLiveServerTestCase):
+class NewVisitorTest(FunctionalTest):
     """
     Test expected outcomes for a new visitor.
     """
-
-    def setUp(self):
-        """
-        Starts the web browser.
-        """
-        self.browser = webdriver.Firefox()
-        staging_server = os.environ.get('STAGING_SERVER')
-        if staging_server:
-            self.live_server_url = 'http://' + staging_server
-
-    def tearDown(self):
-        """
-        Quits the browser.
-        """
-        self.browser.quit()
-
-    def wait_for_item_in_list(self, row_text):
-        """
-        Checks if desired item was added to the list.
-        """
-        start_time = time.time()
-        while True:
-            try:
-                table = self.browser.find_element_by_id('id_list_table')
-                rows = table.find_elements_by_tag_name('tr')
-                self.assertIn(row_text, [row.text for row in rows])
-                return
-            except (AssertionError, WebDriverException) as exception:
-                if time.time() - start_time > MAX_WAIT:
-                    raise exception
-                time.sleep(0.5)
     
-    def test_start_and_retrieve_list_for_one_user(self):
+    def test_start_list_for_one_user(self):
         """
-        Tests that a single user can both start and retrieve lists after logging in.
+        Tests that a single user can start a list.
         """
         # Bob wants to check out our app. He goes to our homepage.
         self.browser.get(self.live_server_url)
@@ -125,30 +89,3 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.assertIn('Buy latest New Yorker', page_text)
 
         # Satisfied, they both go to sleep
-
-    def test_layout_and_styling(self):
-        """
-        Test that our CSS is being applied as expected.
-        """
-        # Bob goes to the home page
-        self.browser.get(self.live_server_url)
-        self.browser.set_window_size(1024, 768)
-
-        # He notices the input box is nicely centered
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        self.assertAlmostEqual(
-            inputbox.location['x'] + (inputbox.size['width'] / 2),
-            512,
-            delta=10
-        )
-
-        # He starts a new list, and notices the input box is nicely centered there too
-        inputbox.send_keys('testing')
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_item_in_list('1. testing')
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        self.assertAlmostEqual(
-            inputbox.location['x'] + (inputbox.size['width'] / 2),
-            512,
-            delta=10
-        )
