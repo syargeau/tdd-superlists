@@ -32,7 +32,6 @@ def new_list(request):
     """
     Handles posts for new lists.
     """
-    # TODO: refactor out hard-coded URL
     # TODO: refactor out validation logic
     list_ = List.objects.create()
     item = Item(text=request.POST['item_text'], list=list_)
