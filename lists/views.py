@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
+from lists.forms import ItemForm
 from lists.models import Item, List
 
 
@@ -7,7 +8,7 @@ def home_page(request):
     """
     Returns the desired home page upon http request.
     """
-    return render(request, 'home.html')
+    return render(request, 'home.html', {'form': ItemForm()})
 
 
 def view_list(request, list_id):

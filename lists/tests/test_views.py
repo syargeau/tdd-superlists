@@ -15,6 +15,13 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
+    def test_home_uses_item_form(self):
+        """
+        Test that the home page uses the item form for creating new list items.
+        """
+        response = self.client.get('/')
+        self.assertIsInstance(response.context['form'], ItemForm)
+
 
 class ListViewTest(TestCase):
     """
