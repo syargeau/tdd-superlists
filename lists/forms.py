@@ -28,3 +28,10 @@ class ItemForm(forms.models.ModelForm):
         error_messages = {
             'text': {'required': EMPTY_ITEM_ERROR}
         }
+    
+    def save(self, for_list):
+        """
+        Save item from form to database.
+        """
+        self.instance.list = for_list
+        return super().save()
