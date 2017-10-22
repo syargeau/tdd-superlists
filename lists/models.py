@@ -20,4 +20,16 @@ class Item(models.Model):
     """
     text = models.TextField(default='')
     list = models.ForeignKey(List, default=None)
-    pass
+
+    class Meta:
+        """
+        Provide meta information for this model so that duplicate items can't be in the same list.
+        """
+        ordering = ('id',)
+        unique_together = ('list', 'text')
+
+    def __str__(self):
+        """
+        Convert Item objects to their string text representations.
+        """
+        return self.text

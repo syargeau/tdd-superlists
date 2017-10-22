@@ -3,40 +3,44 @@ from django.core.exceptions import ValidationError
 from lists.models import Item, List
 
 
-class ListAndItemModelTest(TestCase):
+class ItemModelTest(TestCase):
     """
-    Tests database functionality.
+    Tests Item model database functionality.
     """
 
-    def test_save_and_load(self):
+    def test_default_text(self):
         """
-        Tests ability to save to and load from the database.
+        Test that the default text is a blank string.
         """
-        list_ = List()
-        list_.save()
+        item = Item()
+        self.assertEqual(item.text, '')
 
-        first_item = Item()
-        first_item.text = 'The first (ever) list item'
-        first_item.list = list_
-        first_item.save()
+    def test_item_is_related_to_list(self):
+        """
+        Test that an item is linked to it's proper list.
+        """
+        list_ = List.objects.create()
+        item = Item()
+        item.list = list_
+        item.save()
+        self.assertIn(item, list_.item_set.all())
 
-        second_item = Item()
-        second_item.text = 'The second list item'
-        second_item.list = list_
-        second_item.save()
+    def test_list_ordering(self):
+        """
+        Test that list items are ordered in the same order that they were entered.
+        """
+        list1 = List.objects.create()
+        item1 = Item.objects.create(list=list1, text='i1')
+        item2 = Item.objects.create(list=list1, text='item 2')
+        item3 = Item.objects.create(list=list1, text='3')
+        self.assertEqual(list(Item.objects.all()), [item1, item2, item3])
 
-        saved_list = List.objects.first()
-        self.assertEqual(saved_list, list_)
-
-        saved_items = Item.objects.all()
-        self.assertEqual(saved_items.count(), 2)
-
-        first_saved_item = saved_items[0]
-        second_saved_item = saved_items[1]
-        self.assertEqual(first_saved_item.text, 'The first (ever) list item')
-        self.assertEqual(first_saved_item.list, list_)
-        self.assertEqual(second_saved_item.text, 'The second list item')
-        self.assertEqual(second_saved_item.list, list_)
+    def test_string_representation(self):
+        """
+        Test that items are represented as strings instead of the default object.
+        """
+        item = Item(text='some text')
+        self.assertEqual(str(item), 'some text')
 
     def test_cannot_save_empty_list(self):
         """
@@ -47,6 +51,32 @@ class ListAndItemModelTest(TestCase):
         with self.assertRaises(ValidationError):
             item.save()
             item.full_clean()
+    
+    def test_duplicate_items_are_invalid(self):
+        """
+        Test that duplicate items are invalid at the model level.
+        """
+        list_ = List.objects.create()
+        Item.objects.create(list=list_, text='bla')
+        with self.assertRaises(ValidationError):
+            item = Item(list=list_, text='bla')
+            item.full_clean()
+
+    def test_can_save_same_item_to_different_lists(self):
+        """
+        Test that the same item can be saved to different lists.
+        """
+        list1 = List.objects.create()
+        list2 = List.objects.create()
+        Item.objects.create(list=list1, text='bla')
+        item = Item(list=list2, text='bla')
+        item.full_clean()  # no error should be raised
+
+    
+class ListModelTest(TestCase):
+    """
+    Test that the List Model works as expected.
+    """
 
     def test_get_absolute_url(self):
         """
