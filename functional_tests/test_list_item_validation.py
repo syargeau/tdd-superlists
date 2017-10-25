@@ -75,10 +75,10 @@ class ItemValidationTest(FunctionalTest):
         """
         # Bob starts a list and causes a validation error
         self.browser.get(self.live_server_url)
-        self.get_item_input_box().send_keys('Test duplicate error message disappers')
+        self.get_item_input_box().send_keys('Test duplicate error message disappears')
         self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_item_in_list('1. Test duplicate error message disappers')
-        self.get_item_input_box().send_keys('Test duplicate error message disappers')
+        self.wait_for_item_in_list('1. Test duplicate error message disappears')
+        self.get_item_input_box().send_keys('Test duplicate error message disappears')
         self.get_item_input_box().send_keys(Keys.ENTER)
         self.wait_for(
             lambda: self.assertTrue(
