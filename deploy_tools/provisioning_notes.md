@@ -22,6 +22,7 @@ eg, on Ubuntu:
 
 * see gunicorn-systemd.template.service
 * replace SITENAME with, e.g., staging.my-domain.com
+* replace PSWD with email two-factor authentication app password
 
 ## Folder structure:
 Assume we have a user account at /home/username
