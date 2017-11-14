@@ -61,6 +61,5 @@ class MyListsTest(FunctionalTest):
 
         # He logs out. The "My lists" option disappears.
         self.browser.find_element_by_link_text('Log out').click()
-        self.wait_for(
-            lambda: self.assertEqual(self.browser.find_element_by_link_text('My Lists'), [])
-        )
+        navbar = self.browser.find_element_by_css_selector('.navbar')
+        self.assertNotIn('My lists', navbar.text)
