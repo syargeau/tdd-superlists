@@ -53,9 +53,7 @@ class ItemValidationTest(FunctionalTest):
         """
         # Bob goes to the home page and starts a new list
         self.browser.get(self.live_server_url)
-        self.get_item_input_box().send_keys('Call Papa')
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_item_in_list('1. Call Papa')
+        self.add_list_item('Call Papa')
 
         # He accidentally tries to enter the same item
         self.get_item_input_box().send_keys('Call Papa')
@@ -75,9 +73,7 @@ class ItemValidationTest(FunctionalTest):
         """
         # Bob starts a list and causes a validation error
         self.browser.get(self.live_server_url)
-        self.get_item_input_box().send_keys('Test duplicate error message disappears')
-        self.get_item_input_box().send_keys(Keys.ENTER)
-        self.wait_for_item_in_list('1. Test duplicate error message disappears')
+        self.add_list_item('Test duplicate error message disappears')
         self.get_item_input_box().send_keys('Test duplicate error message disappears')
         self.get_item_input_box().send_keys(Keys.ENTER)
         self.wait_for(

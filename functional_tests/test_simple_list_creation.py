@@ -27,23 +27,13 @@ class NewVisitorTest(FunctionalTest):
             'Enter a to-do item'
         )
 
-        # He types "Call Mom and Dad".
-        inputbox.send_keys('Call Mom and Dad')
-
-        # When he hits enter, the page updates and the to-do list now states:
-        # "1. Call Mom and Dad" as an item in the to-do list
-        inputbox.send_keys(Keys.ENTER)
-
-        self.wait_for_item_in_list('1. Call Mom and Dad')
+        # He types "Call Mom and Dad". The page updates with his item
+        self.add_list_item('Call Mom and Dad')
 
         # There is still a text box inviting him to enter another item. He enters "Call Brother".
-        inputbox = self.get_item_input_box()
-        inputbox.send_keys('Call Brother')
-        inputbox.send_keys(Keys.ENTER)
-
-        # The page updates again, and now shows both items
+        # The page updates with his new item, plus his existing one.
+        self.add_list_item('Call Brother')
         self.wait_for_item_in_list('1. Call Mom and Dad')
-        self.wait_for_item_in_list('2. Call Brother')
 
         # Bob can now sleep peacefully, knowing he will remember to contact his family.
 
@@ -54,9 +44,7 @@ class NewVisitorTest(FunctionalTest):
         # Bob starts a new to-do list
         self.browser.get(self.live_server_url)
         inputbox = self.get_item_input_box()
-        inputbox.send_keys('Call Mom and Dad')
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_item_in_list('1. Call Mom and Dad')
+        self.add_list_item('Call Mom and Dad')
 
         # He notices that his list has a unique URL
         bob_list_url = self.browser.current_url
@@ -73,11 +61,8 @@ class NewVisitorTest(FunctionalTest):
         self.assertNotIn('Call Brother', page_text)
 
         # Sue starts her own list
-        inputbox = self.get_item_input_box()
-        inputbox.send_keys('Buy latest New Yorker')
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_item_in_list('1. Buy latest New Yorker')
-
+        self.add_list_item('Buy latest New Yorker')
+        
         # She gets her own unique URL
         sue_list_url = self.browser.current_url
         self.assertRegex(sue_list_url, '/lists/.+')
