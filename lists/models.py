@@ -1,11 +1,13 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 
 class List(models.Model):
     """
     Handles storing the different lists
     """
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
     
     def get_absolute_url(self):
         """
