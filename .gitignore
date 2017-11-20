@@ -3,3 +3,4 @@ geckodriver.log
 __pycache__
 *.pyc
 .DS_Store
+functional_test/screendumps
